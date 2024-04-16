@@ -3,6 +3,7 @@ import path from "path";
 import http from "http";
 import { Server } from "socket.io";
 import { formatMessage } from "./utils/formatMessage";
+import { getCurrentUser, userJoin } from "./utils/users";
 
 const app = express();
 const server = http.createServer(app);
@@ -11,16 +12,23 @@ const io = new Server(server);
 app.use(json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// Quand houver conexao de um client
 io.on("connection", (socket) => {
   const chatBot = "ChatBot";
 
-  socket.emit("message", formatMessage(chatBot, "Welcome to chatCord"));
+  socket.on("joinRoom", (userData: any) => {
+    const user = userJoin(socket.id, userData.username, userData.room);
 
-  socket.broadcast.emit(
-    "message",
-    formatMessage(chatBot, "An user has joined the chat!")
-  );
+    socket.join(user.room);
+
+    socket.emit("message", formatMessage(chatBot, "Welcome to chatCord"));
+
+    socket.broadcast
+      .to(user.room)
+      .emit(
+        "message",
+        formatMessage(chatBot, `${user.username} has joined the chat!`)
+      );
+  });
 
   socket.on("disconnect", () => {
     io.emit("message", formatMessage(chatBot, "An user has left the chat."));
@@ -28,7 +36,9 @@ io.on("connection", (socket) => {
 
   // Listen for chatMessage
   socket.on("chatMessage", (message) => {
-    io.emit("message", formatMessage("USER", message));
+    const user = getCurrentUser(socket.id);
+
+    io.to(user.room).emit("message", formatMessage(user.username, message));
   });
 });
 
