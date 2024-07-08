@@ -1,11 +1,12 @@
 import express, { json } from "express";
 import path from "path";
 import http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { formatMessage } from "./utils/formatMessage";
 import {
   getCurrentUser,
   getRoomUsers,
+  User,
   userJoin,
   userLeave,
 } from "./utils/users";
@@ -17,11 +18,15 @@ const io = new Server(server);
 app.use(json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: Socket) => {
   const chatBot = "ChatBot";
 
-  socket.on("joinRoom", (userData: any) => {
-    const user = userJoin(socket.id, userData.username, userData.room);
+  socket.on("joinRoom", (userData: User) => {
+    const user = userJoin({
+      id: socket.id,
+      username: userData.username,
+      room: userData.room,
+    });
 
     socket.join(user.room);
 
@@ -61,7 +66,7 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", (message) => {
     const user = getCurrentUser(socket.id);
 
-    io.to(user.room).emit("message", formatMessage(user.username, message));
+    io.to(user!.room).emit("message", formatMessage(user!.username, message));
   });
 });
 
