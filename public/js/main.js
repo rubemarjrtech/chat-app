@@ -35,14 +35,33 @@ chatForm.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-function outputMessage(message) {
-  const div = document.createElement("div");
-  div.classList.add("message");
-  div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
-  <p class="text">
-    ${message.text}
-  </p>`;
-  document.querySelector(".chat-messages").appendChild(div);
+function outputMessage(messages) {
+  switch (messages) {
+    case !messages:
+      return;
+
+    case !!Array.isArray(messages):
+      for (const msg of messages) {
+        const div = document.createElement("div");
+        div.classList.add("message");
+        div.innerHTML = `<p class="meta">${msg.username} <span>${msg.createdAt}</span></p>
+    <p class="text">
+      ${msg.text}
+    </p>`;
+        document.querySelector(".chat-messages").appendChild(div);
+      }
+      return;
+
+    default:
+      const div = document.createElement("div");
+      div.classList.add("message");
+      div.innerHTML = `<p class="meta">${messages.username} <span>${messages.createdAt}</span></p>
+      <p class="text">
+        ${messages.text}
+      </p>`;
+      document.querySelector(".chat-messages").appendChild(div);
+      return;
+  }
 }
 
 function outputRoomName(room) {
