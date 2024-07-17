@@ -1,12 +1,11 @@
-import mongoose, { Document, Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { FormattedMessage } from "../../utils/formatMessage";
 
-export interface Message extends FormattedMessage, Document {
+export interface MessageTypes extends FormattedMessage {
   room: string;
-  createdAt: string;
 }
 
-const messageSchema = new mongoose.Schema<Message, Model<Message>>(
+const messageSchema = new mongoose.Schema<MessageTypes, Model<MessageTypes>>(
   {
     username: { type: String, required: true },
     text: { type: String, required: true },
