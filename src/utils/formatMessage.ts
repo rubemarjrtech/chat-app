@@ -20,7 +20,7 @@ export function formatMessage(
 }
 
 export function formatAxiosResponseMessages(
-  messages: AxiosResponse<MessageTypes | MessageTypes[]>
+  messages: MessageTypes[]
 ): FormattedMessage[] | void {
   if (!!Array.isArray(messages)) {
     const messagesArr = messages.map((message) => {
@@ -35,6 +35,8 @@ export function formatAxiosResponseMessages(
 
     return messagesArr;
   }
+
+  console.log("not array");
 
   return;
 }
