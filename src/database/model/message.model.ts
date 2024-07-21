@@ -1,16 +1,16 @@
-import mongoose, { Model } from "mongoose";
+import mongoose from "mongoose";
 import { FormattedMessage } from "../../utils/formatMessage";
 
 export interface MessageTypes extends FormattedMessage {
   room: string;
 }
 
-const messageSchema = new mongoose.Schema<MessageTypes, Model<MessageTypes>>(
+const messageSchema = new mongoose.Schema<MessageTypes>(
   {
-    username: { type: String, required: true },
-    text: { type: String, required: true },
-    room: { type: String, required: true },
-    createdAt: { type: String, required: true },
+    room: { type: String },
+    username: { type: String },
+    text: { type: String },
+    createdAt: { type: Date },
   },
   {
     toJSON: {
@@ -23,6 +23,4 @@ const messageSchema = new mongoose.Schema<MessageTypes, Model<MessageTypes>>(
   }
 );
 
-messageSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
-
-export const Message = mongoose.model("Message", messageSchema);
+export const Message = mongoose.model<MessageTypes>("Message", messageSchema);

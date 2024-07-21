@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 export interface User {
   id: Socket["id"];
   username: string;
-  room: string;
+  room: "JavaScript" | "Python" | "PHP" | "Ruby" | "Java" | "C#";
 }
 
 const users: User[] = [];
