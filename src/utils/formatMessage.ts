@@ -1,11 +1,10 @@
 import moment from "moment";
 import { MessageTypes } from "../database/model/message.model";
-import { AxiosResponse } from "axios";
 
 export interface FormattedMessage {
   username: string;
   text: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export function formatMessage(
@@ -15,28 +14,22 @@ export function formatMessage(
   return {
     username,
     text,
-    createdAt: moment().format("h:mm a"),
+    createdAt: new Date(),
   };
 }
 
 export function formatAxiosResponseMessages(
   messages: MessageTypes[]
 ): FormattedMessage[] | void {
-  if (!!Array.isArray(messages)) {
-    const messagesArr = messages.map((message) => {
-      const formattedMessage = {
-        username: message.username,
-        text: message.text,
-        createdAt: message.createdAt,
-      };
+  const messagesArr = messages.map((message) => {
+    const formattedMessage = {
+      username: message.username,
+      text: message.text,
+      createdAt: message.createdAt,
+    };
 
-      return formattedMessage;
-    });
+    return formattedMessage;
+  });
 
-    return messagesArr;
-  }
-
-  console.log("not array");
-
-  return;
+  return messagesArr;
 }

@@ -11,13 +11,19 @@ const socket = io();
 
 socket.emit("joinRoom", { username, room });
 
+socket.on("roomMessages", (message) => {
+  outputRoomMessages(message);
+
+  // Scroll down
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+});
+
 socket.on("roomUsers", ({ room, users }) => {
   outputRoomName(room);
   outputUsers(users);
 });
 
 socket.on("message", (message) => {
-  console.log(message);
   outputMessage(message);
 
   // Scroll down
@@ -35,29 +41,36 @@ chatForm.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-function outputMessage(messages) {
-  if (!messages) {
+function outputRoomMessages(messages) {
+  if (!messages || messages.length === 0) {
     return;
   }
-
-  if (Array.isArray(messages)) {
-    for (const msg of messages) {
-      const div = document.createElement("div");
-      div.classList.add("message");
-      div.innerHTML = `<p class="meta">${msg.username} <span>${msg.createdAt}</span></p>
+  for (const msg of messages) {
+    const time = new Date(msg.createdAt)
+      .toLocaleTimeString("br-BR")
+      .slice(0, 5);
+    const div = document.createElement("div");
+    div.classList.add("message");
+    div.innerHTML = `<p class="meta">${msg.username} <span>${time}</span></p>
   <p class="text">
     ${msg.text}
   </p>`;
-      document.querySelector(".chat-messages").appendChild(div);
-    }
-    return;
+    document.querySelector(".chat-messages").appendChild(div);
   }
+  return;
+}
+
+function outputMessage(message) {
+  const time = new Date(message.createdAt)
+    .toLocaleTimeString("br-BR")
+    .slice(0, 5);
+  console.log(time);
   const div = document.createElement("div");
   div.classList.add("message");
-  div.innerHTML = `<p class="meta">${messages.username} <span>${messages.createdAt}</span></p>
-      <p class="text">
-        ${messages.text}
-      </p>`;
+  div.innerHTML = `<p class="meta">${message.username} <span>${time}</span></p>
+<p class="text">
+  ${message.text}
+</p>`;
   document.querySelector(".chat-messages").appendChild(div);
 }
 
