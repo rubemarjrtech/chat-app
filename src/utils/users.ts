@@ -19,11 +19,11 @@ export function userJoin({ id, username, room }: User): User {
 
 // Get current user
 export function getCurrentUser(id: string): User | undefined {
-  return users.find((user: any) => user.id === id);
+  return users.find((user) => user.id === id);
 }
 
 // User leaves chat
-export function userLeave(id: string) {
+export function userLeave(id: string): User | void {
   const index = users.findIndex((user) => user.id === id);
 
   if (index !== -1) {
@@ -32,6 +32,6 @@ export function userLeave(id: string) {
 }
 
 // Get room users
-export function getRoomUsers(room: string) {
+export function getRoomUsers(room: string): User[] {
   return users.filter((user) => user.room === room);
 }
