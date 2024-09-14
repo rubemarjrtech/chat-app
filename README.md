@@ -1,4 +1,4 @@
-#### About this project:
+### About this project:
 
 Project developed with the following technologies: TypeScript, Nodejs, Expressjs, MongoDB and Socket.io.
 
@@ -16,4 +16,4 @@ Open two more tabs on your browser and visit the same URL localhost:4000. Join t
 
 
 Then send some test messages in both the first and second tabs. You will see only they can see these messages, users from different room cannot see it.
-Also, users who joined within a time frame of 2 minutes will be able to see all the room message. The time limit was chosen to be 2 minutes on purpose for demonstration purposes.
+Also, users who joined within a time frame of 2 minutes will be able to see all the room message. The time limit was chosen to be 2 minutes on purpose for demonstration.
