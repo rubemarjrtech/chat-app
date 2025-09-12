@@ -1,22 +1,16 @@
 import * as http from "http";
-import { App } from "./app";
 import socketServer from "../sockets/socket-server";
 import events from "../sockets/events";
+import app from "./app";
 
 (async () => {
   try {
-    const app = new App();
-    const server = http.createServer(app.app);
+    const server = http.createServer(app.getFramework());
     socketServer.setInstance(server).registerAllEvents(events);
-    await app.init();
+    await app.configure();
 
     const PORT = 4000;
-    server.listen(PORT, () =>
-      console.log(
-        `Server running on port ${PORT}`,
-        "\nConnected to database successfully!"
-      )
-    );
+    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   } catch (err) {
     console.log(err);
     console.log("Failed connecting to db");

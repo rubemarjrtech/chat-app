@@ -17,10 +17,17 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@redis/bloom": "^1.2.0",
+    "@redis/client": "^1.6.0",
+    "@redis/graph": "^1.1.1",
+    "@redis/json": "^1.0.7",
+    "@redis/search": "^1.2.0",
+    "@redis/time-series": "^1.1.0",
     "axios": "^1.7.2",
     "express": "^4.19.2",
     "moment": "^2.30.1",
     "mongoose": "^8.5.1",
+    "redis": "^4.7.0",
     "socket.io": "^4.7.5"
   }
 }

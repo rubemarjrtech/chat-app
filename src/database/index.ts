@@ -1,7 +1,16 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
+import { IDatabaseClient } from "./interfaces/IDatabaseClient";
 
-export const connectDb = async (): Promise<Mongoose> =>
-  await mongoose.connect("mongodb://localhost:27017/chatcord");
+class Database implements IDatabaseClient {
+  private dbClient = mongoose;
 
-export const closeDbConnection = async (): Promise<void> =>
-  await mongoose.connection.close();
+  async init(): Promise<void> {
+    await this.dbClient.connect("mongodb://localhost:27017/chatcord");
+  }
+
+  async stop(): Promise<void> {
+    await this.dbClient.connection.close();
+  }
+}
+
+export default new Database();

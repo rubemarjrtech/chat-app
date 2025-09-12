@@ -1,31 +1,33 @@
-import express, { Application, json } from "express";
-import path from "path";
-import { connectDb } from "./database";
-import { router } from "./routes";
+import { Application } from "express";
+import database from "./database";
+import { setupGears } from "./redis/gears-file";
+import { ICacheClient } from "./cache/interfaces/ICacheClient";
+import cache from "./cache";
+import { IDatabaseClient } from "./database/interfaces/IDatabaseClient";
+import { IFrameworkClient } from "./interfaces/IFrameworkClient";
+import framework from "./classes/framework";
 
-export class App {
-  public readonly app: Application;
+class App {
+  private cacheClient: ICacheClient;
+  private dbClient: IDatabaseClient;
+  private framework: IFrameworkClient<Application>;
+
   constructor() {
-    this.app = express();
+    this.cacheClient = cache;
+    this.dbClient = database;
+    this.framework = framework;
   }
 
-  public async init(): Promise<void> {
-    await this.initDatabase();
-    this.middlewares();
-    this.routes();
+  public async configure(): Promise<void> {
+    await this.dbClient.init();
+    await this.cacheClient.init();
+    this.framework.configure();
+    await setupGears();
   }
 
-  private async initDatabase() {
-    console.log("Trying to connect to database...");
-    await connectDb();
-  }
-
-  private middlewares(): void {
-    this.app.use(json());
-    this.app.use(express.static(path.join(__dirname, "..", "public")));
-  }
-
-  private routes() {
-    this.app.use("/api", router);
+  getFramework() {
+    return this.framework.getInstance();
   }
 }
+
+export default new App();
