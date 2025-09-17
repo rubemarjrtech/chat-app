@@ -1,9 +1,9 @@
-import { RedisClientWithJSON } from "@redis/client";
+import { RedisClientType } from "@redis/client";
 import { ICacheClient } from "./interfaces/ICacheClient";
-import { createClient } from "redis";
+import { createClient, RedisDefaultModules } from "redis";
 
 class Cache implements ICacheClient {
-  private redisClient: RedisClientWithJSON;
+  private redisClient: RedisClientType<RedisDefaultModules>;
 
   async init(): Promise<void> {
     this.redisClient = createClient({
@@ -12,7 +12,7 @@ class Cache implements ICacheClient {
     await this.redisClient.connect();
   }
 
-  getClient(): RedisClientWithJSON {
+  getClient(): RedisClientType<RedisDefaultModules> {
     return this.redisClient;
   }
 }
