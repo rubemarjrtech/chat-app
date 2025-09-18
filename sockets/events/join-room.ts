@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { getRoomUsers, User, userJoin } from "../../src/utils/users";
 import axios from "axios";
 import { MessageTypes } from "../../src/database/model/message.model";
-import socketServer from "../socket-server";
+import socketServerManager from "../socket-server";
 import {
   formatAxiosResponseMessages,
   formatMessage,
@@ -10,7 +10,7 @@ import {
 
 export default async function joinRoom(socket: Socket, userData: User) {
   const chatBot = "ChatBot";
-  const io = socketServer.getInstance();
+  const io = socketServerManager.getInstance();
   const user = userJoin({
     id: socket.id,
     username: userData.username,

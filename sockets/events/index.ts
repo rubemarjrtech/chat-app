@@ -1,6 +1,6 @@
 import { EventTypes } from "../types/event-types";
 import chatMessage from "./chat-message";
-import { disconnect } from "./disconnect";
+import disconnect from "./disconnect";
 import joinRoom from "./join-room";
 
 const events: EventTypes[] = [

@@ -3,11 +3,11 @@ import * as http from "http";
 import { EventTypes } from "./types/event-types";
 import { ISocketIOServer } from "./interfaces/ISocketIOServer";
 
-export class SocketServer implements ISocketIOServer<Server> {
+export class SocketServerManager implements ISocketIOServer<Server> {
   private socketServer: Server;
-  private activeSockets: Map<string, Socket>;
+  private activeSockets = new Map<string, Socket>();
 
-  setInstance(config?: http.Server | number): SocketServer {
+  setInstance(config?: http.Server | number): SocketServerManager {
     if (!this.socketServer) {
       if (config) {
         this.socketServer = new Server(config);
@@ -50,4 +50,4 @@ export class SocketServer implements ISocketIOServer<Server> {
   }
 }
 
-export default new SocketServer();
+export default new SocketServerManager();

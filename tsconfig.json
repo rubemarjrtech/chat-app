@@ -8,6 +8,10 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "outDir": "./build"
+    "outDir": "./build",
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ]
   }
 }

@@ -2,14 +2,14 @@ import { Socket } from "socket.io";
 import { MessageTypes } from "../../src/database/model/message.model";
 import { formatMessage } from "../../src/utils/formatMessage";
 import { getCurrentUser } from "../../src/utils/users";
-import socketServer from "../socket-server";
+import socketServerManager from "../socket-server";
 import axios from "axios";
 
 export default async function chatMessage(socket: Socket, message: string) {
   const chatBot = "ChatBot";
-  const io = socketServer.getInstance();
+  const io = socketServerManager.getInstance();
   const user = getCurrentUser(socket.id);
-  const activeSocket = socketServer.isSocketActive(socket);
+  const activeSocket = socketServerManager.isSocketActive(socket);
 
   if (!user || !activeSocket) {
     if (activeSocket && activeSocket.connected) {

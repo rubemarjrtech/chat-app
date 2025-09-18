@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
 import { getRoomUsers, userLeave } from "../../src/utils/users";
 import { formatMessage } from "../../src/utils/formatMessage";
-import socketServer from "../socket-server";
+import socketServerManager from "../socket-server";
 
-export async function disconnect(socket: Socket) {
+export default async function disconnect(socket: Socket) {
   const chatBot = "ChatBot";
-  const io = socketServer.getInstance();
+  const io = socketServerManager.getInstance();
   const user = userLeave(socket.id);
 
   if (!user) {
