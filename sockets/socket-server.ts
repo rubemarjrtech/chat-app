@@ -2,10 +2,11 @@ import { Server, Socket } from "socket.io";
 import * as http from "http";
 import { EventTypes } from "./types/event-types";
 import { ISocketIOServer } from "./interfaces/ISocketIOServer";
+import { ActiveUserSocket } from "./types/active-user-socket";
 
 export class SocketServerManager implements ISocketIOServer<Server> {
   private socketServer: Server;
-  private activeSockets = new Map<string, Socket>();
+  private activeSockets = new Map<string, ActiveUserSocket>();
 
   setInstance(config?: http.Server | number): SocketServerManager {
     if (!this.socketServer) {
@@ -27,15 +28,16 @@ export class SocketServerManager implements ISocketIOServer<Server> {
     return this.socketServer;
   }
 
-  registerActiveSocket(socket: Socket): void {
-    this.activeSockets.set(socket.id, socket);
+  registerActiveSocket(activeUserSocket: ActiveUserSocket): ActiveUserSocket {
+    this.activeSockets.set(activeUserSocket[0].id, activeUserSocket);
+    return activeUserSocket;
   }
 
-  removeFromActiveSockets(socket: Socket): void {
+  removeActiveSocket(socket: Socket): void {
     this.activeSockets.delete(socket.id);
   }
 
-  isSocketActive(socket: Socket): Socket | void {
+  getActiveSocket(socket: Socket): ActiveUserSocket | void {
     return this.activeSockets.get(socket.id);
   }
 
@@ -43,7 +45,6 @@ export class SocketServerManager implements ISocketIOServer<Server> {
     const io = this.getInstance();
     events.forEach((event) => {
       io.on("connection", (socket) => {
-        this.registerActiveSocket(socket);
         socket.on(event.name, (...args) => event.handler(socket, ...args));
       });
     });

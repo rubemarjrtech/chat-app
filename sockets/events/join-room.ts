@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { getRoomUsers, User, userJoin } from "../../src/utils/users";
+import { getRoomUsers, User } from "../../src/utils/users";
 import axios from "axios";
 import { MessageTypes } from "../../src/database/model/message.model";
 import socketServerManager from "../socket-server";
@@ -11,11 +11,10 @@ import {
 export default async function joinRoom(socket: Socket, userData: User) {
   const chatBot = "ChatBot";
   const io = socketServerManager.getInstance();
-  const user = userJoin({
-    id: socket.id,
-    username: userData.username,
-    room: userData.room,
-  });
+  const [activeSocket, user] = socketServerManager.registerActiveSocket([
+    socket,
+    userData,
+  ]);
 
   socket.join(user.room);
 
@@ -30,7 +29,7 @@ export default async function joinRoom(socket: Socket, userData: User) {
     );
 
     if (!!messages.data && messages.status === 200) {
-      io.to(user.id).emit(
+      io.to(activeSocket.id).emit(
         "roomMessages",
         formatAxiosResponseMessages(messages.data)
       );
