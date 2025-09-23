@@ -21,8 +21,8 @@ class Framework implements IFrameworkClient<Application> {
   }
 
   configure(): void {
-    this.instance.use("/api", router);
     this.instance.use(json());
+    this.instance.use("/api", router);
     this.instance.use(express.static(path.join(__dirname, "..", "public")));
   }
 }

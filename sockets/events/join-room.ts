@@ -19,7 +19,7 @@ export default async function joinRoom(socket: Socket, userData: User) {
   socket.join(user.room);
 
   try {
-    const messages = await axios.get<MessageTypes[]>(
+    const response = await axios.get<MessageTypes[]>(
       `http://localhost:4000/api/chatcord/messages/`,
       {
         params: {
@@ -28,10 +28,10 @@ export default async function joinRoom(socket: Socket, userData: User) {
       }
     );
 
-    if (!!messages.data && messages.status === 200) {
+    if (response.data && response.status === 200) {
       io.to(activeSocket.id).emit(
         "roomMessages",
-        formatAxiosResponseMessages(messages.data)
+        formatAxiosResponseMessages(response.data)
       );
     }
   } catch (err) {
@@ -54,9 +54,8 @@ export default async function joinRoom(socket: Socket, userData: User) {
       formatMessage(chatBot, `${user.username} has joined the chat!`)
     );
 
-  // Send users and room info
   io.to(user.room).emit("roomUsers", {
     room: user.room,
-    users: getRoomUsers(user.room),
+    users: getRoomUsers(user.room, socketServerManager),
   });
 }

@@ -1,26 +1,13 @@
 import { Socket } from "socket.io";
+import { SocketServerManager } from "../../sockets/socket-server";
 
-export interface User {
+export type User = {
   id: Socket["id"];
   username: string;
   room: "JavaScript" | "Python" | "PHP" | "Ruby" | "Java" | "C#";
-}
+};
 
 const users: User[] = [];
-
-// Join user to chat
-export function userJoin({ id, username, room }: User): User {
-  const user = { id, username, room };
-
-  users.push(user);
-
-  return user;
-}
-
-// Get current user
-export function getCurrentUser(id: string): User | undefined {
-  return users.find((user) => user.id === id);
-}
 
 // User leaves chat
 export function userLeave(id: string): User | void {
@@ -31,7 +18,15 @@ export function userLeave(id: string): User | void {
   }
 }
 
-// Get room users
-export function getRoomUsers(room: string): User[] {
-  return users.filter((user) => user.room === room);
+export function getRoomUsers(
+  room: string,
+  socketServerManger: SocketServerManager
+) {
+  return Array.from(socketServerManger.getAllActiveSockets().values())
+    .filter(([_, user]) => {
+      return user.room === room;
+    })
+    .map(([_, user]) => {
+      return user.username;
+    });
 }

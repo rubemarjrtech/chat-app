@@ -41,6 +41,10 @@ export class SocketServerManager implements ISocketIOServer<Server> {
     return this.activeSockets.get(socket.id);
   }
 
+  getAllActiveSockets(): Map<string, ActiveUserSocket> {
+    return this.activeSockets;
+  }
+
   registerAllEvents(events: EventTypes[]) {
     const io = this.getInstance();
     events.forEach((event) => {
