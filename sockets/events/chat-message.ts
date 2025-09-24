@@ -1,8 +1,8 @@
 import { Socket } from "socket.io";
-import { MessageTypes } from "../../src/database/model/message.model";
 import { formatMessage } from "../../src/utils/formatMessage";
 import socketIOServerManager from "../socket-io-server";
 import axios, { AxiosResponse } from "axios";
+import { RoomMessageTypes } from "../../src/types/room-message-types";
 
 export default async function chatMessage(
   socket: Socket,
@@ -32,7 +32,11 @@ export default async function chatMessage(
     const msg = formatMessage(user.username, message);
 
     try {
-      const response = await axios.post<unknown, AxiosResponse, MessageTypes>(
+      const response = await axios.post<
+        unknown,
+        AxiosResponse,
+        RoomMessageTypes
+      >(
         "http://localhost:4000/api/chatcord/messages",
         {
           username: msg.username,

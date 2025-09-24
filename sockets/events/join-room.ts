@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { getRoomUsers, User } from "../../src/utils/users";
 import axios from "axios";
-import { MessageTypes } from "../../src/database/model/message.model";
+import { RoomSchemaTypes } from "../../src/database/model/message.model";
 import socketIOServerManager from "../socket-io-server";
 import {
   formatAxiosResponseMessages,
@@ -19,7 +19,7 @@ export default async function joinRoom(socket: Socket, userData: User) {
   socket.join(user.room);
 
   try {
-    const response = await axios.get<MessageTypes[]>(
+    const response = await axios.get<RoomSchemaTypes>(
       `http://localhost:4000/api/chatcord/messages/`,
       {
         params: {

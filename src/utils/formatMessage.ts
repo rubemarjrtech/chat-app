@@ -1,10 +1,5 @@
-import { MessageTypes } from "../database/model/message.model";
-
-export type MessageFormat = {
-  username: string;
-  text: string;
-  createdAt: Date;
-};
+import { RoomSchemaTypes } from "../database/model/message.model";
+import { MessageFormat } from "../types/message-format";
 
 export function formatMessage(username: string, text: string): MessageFormat {
   return {
@@ -15,17 +10,7 @@ export function formatMessage(username: string, text: string): MessageFormat {
 }
 
 export function formatAxiosResponseMessages(
-  messages: MessageTypes[]
-): MessageFormat[] | void {
-  const messagesArr = messages.map((message) => {
-    const formattedMessage = {
-      username: message.username,
-      text: message.text,
-      createdAt: message.createdAt,
-    };
-
-    return formattedMessage;
-  });
-
-  return messagesArr;
+  data: RoomSchemaTypes
+): MessageFormat[] {
+  return data.messages.map((message) => message);
 }

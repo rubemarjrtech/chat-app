@@ -1,19 +1,22 @@
 import { Request, Response } from "express";
-import { Message } from "../database/model/message.model";
+import { RoomMessages } from "../database/model/message.model";
+import { setMessage } from "../redis/gears-file";
+import { RoomMessageTypes } from "../types/room-message-types";
 
 export class MessageController {
-  public async create(req: Request, res: Response) {
+  public async create(
+    req: Request<unknown, unknown, RoomMessageTypes>,
+    res: Response
+  ) {
     try {
       const { room, username, text, createdAt } = req.body;
 
-      const message = new Message({
+      await setMessage({
         room,
         username,
         text,
         createdAt,
       });
-
-      await message.save();
 
       res.status(201).send({
         message: "Message stored successfully!",
@@ -35,12 +38,9 @@ export class MessageController {
           message: "room was undefined",
         });
       }
-      const findMessages = await Message.find({
-        room: `${room}`,
-      }).exec();
 
-      const messages = findMessages.map((message) => {
-        return message.toObject();
+      const messages = await RoomMessages.findOne({
+        room,
       });
 
       res.status(200).json(messages);
