@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { SocketServerManager } from "../../sockets/socket-server";
+import { SocketIOServerManager } from "../../sockets/socket-io-server";
 
 export type User = {
   id: Socket["id"];
@@ -20,9 +20,9 @@ export function userLeave(id: string): User | void {
 
 export function getRoomUsers(
   room: string,
-  socketServerManger: SocketServerManager
+  socketIOServerManager: SocketIOServerManager
 ) {
-  return Array.from(socketServerManger.getAllActiveSockets().values())
+  return Array.from(socketIOServerManager.getAllActiveSockets().values())
     .filter(([_, user]) => {
       return user.room === room;
     })

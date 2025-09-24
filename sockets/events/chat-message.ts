@@ -1,46 +1,70 @@
 import { Socket } from "socket.io";
 import { MessageTypes } from "../../src/database/model/message.model";
 import { formatMessage } from "../../src/utils/formatMessage";
-import { getCurrentUser } from "../../src/utils/users";
-import socketServerManager from "../socket-server";
-import axios from "axios";
+import socketIOServerManager from "../socket-io-server";
+import axios, { AxiosResponse } from "axios";
 
-export default async function chatMessage(socket: Socket, message: string) {
-  const chatBot = "ChatBot";
-  const io = socketServerManager.getInstance();
-  const user = getCurrentUser(socket.id);
-  const activeSocket = socketServerManager.isSocketActive(socket);
+export default async function chatMessage(
+  socket: Socket,
+  message: string,
+  callback: Function
+) {
+  const activeUserSocket = socketIOServerManager.getActiveSocket(socket);
 
-  if (!user || !activeSocket) {
-    if (activeSocket && activeSocket.connected) {
-      socket.emit(
-        "message",
-        formatMessage(
-          chatBot,
-          "Your session seems to have expired. Please reconnect and try again."
-        )
-      );
-    }
+  if (!activeUserSocket) {
+    callback({
+      success: false,
+      error: "Session expired.Try reconnecting.",
+      code: "SESSION_EXPIRED",
+    });
     return;
   }
 
-  const msg = formatMessage(user.username, message);
+  const [activeSocket, user] = activeUserSocket;
 
-  io.to(user.room).emit("message", msg);
+  if (!activeSocket.connected) {
+    callback({
+      success: false,
+      error: "Session expired.Try reconnecting.",
+      code: "SESSION_EXPIRED",
+    });
+  } else {
+    const msg = formatMessage(user.username, message);
 
-  // save to database
-  try {
-    await axios.post<any, any, MessageTypes>(
-      "http://localhost:4000/api/chatcord/messages",
-      {
-        username: msg.username,
-        text: msg.text,
-        room: user.room,
-        createdAt: msg.createdAt,
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
-  } catch (err) {
-    console.log(err);
+    try {
+      const response = await axios.post<unknown, AxiosResponse, MessageTypes>(
+        "http://localhost:4000/api/chatcord/messages",
+        {
+          username: msg.username,
+          text: msg.text,
+          room: user.room,
+          createdAt: msg.createdAt,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (response.status !== 201) {
+        callback({
+          success: false,
+          message: "Failed saving to database",
+        });
+        return;
+      }
+
+      const io = socketIOServerManager.getInstance();
+      io.to(user.room).emit("message", msg);
+
+      callback({
+        success: true,
+        message: "Mensagem enviada com sucesso",
+      });
+    } catch (err) {
+      console.log(err);
+      callback({
+        success: false,
+        error: "Error sending mensage",
+        code: "SERVER_ERROR",
+      });
+    }
   }
 }

@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { getRoomUsers, User } from "../../src/utils/users";
 import axios from "axios";
 import { MessageTypes } from "../../src/database/model/message.model";
-import socketServerManager from "../socket-server";
+import socketIOServerManager from "../socket-io-server";
 import {
   formatAxiosResponseMessages,
   formatMessage,
@@ -10,8 +10,8 @@ import {
 
 export default async function joinRoom(socket: Socket, userData: User) {
   const chatBot = "ChatBot";
-  const io = socketServerManager.getInstance();
-  const [activeSocket, user] = socketServerManager.registerActiveSocket([
+  const io = socketIOServerManager.getInstance();
+  const [activeSocket, user] = socketIOServerManager.registerActiveSocket([
     socket,
     userData,
   ]);
@@ -56,6 +56,6 @@ export default async function joinRoom(socket: Socket, userData: User) {
 
   io.to(user.room).emit("roomUsers", {
     room: user.room,
-    users: getRoomUsers(user.room, socketServerManager),
+    users: getRoomUsers(user.room, socketIOServerManager),
   });
 }

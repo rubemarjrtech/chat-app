@@ -1,16 +1,12 @@
-import moment from "moment";
 import { MessageTypes } from "../database/model/message.model";
 
-export interface FormattedMessage {
+export type MessageFormat = {
   username: string;
   text: string;
   createdAt: Date;
-}
+};
 
-export function formatMessage(
-  username: string,
-  text: string
-): FormattedMessage {
+export function formatMessage(username: string, text: string): MessageFormat {
   return {
     username,
     text,
@@ -20,7 +16,7 @@ export function formatMessage(
 
 export function formatAxiosResponseMessages(
   messages: MessageTypes[]
-): FormattedMessage[] | void {
+): MessageFormat[] | void {
   const messagesArr = messages.map((message) => {
     const formattedMessage = {
       username: message.username,

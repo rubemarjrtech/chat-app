@@ -1,12 +1,12 @@
 import * as http from "http";
-import socketServerManager from "../sockets/socket-server";
+import socketIOServerManager from "../sockets/socket-io-server";
 import events from "../sockets/events";
 import app from "./app";
 
 (async () => {
   try {
     const server = http.createServer(app.getFramework());
-    socketServerManager.setInstance(server).registerAllEvents(events);
+    socketIOServerManager.setInstance(server).registerAllEvents(events);
     await app.configure();
 
     const PORT = 4000;

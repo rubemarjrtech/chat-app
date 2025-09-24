@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
 import { getRoomUsers, userLeave } from "../../src/utils/users";
 import { formatMessage } from "../../src/utils/formatMessage";
-import socketServerManager from "../socket-server";
+import socketIOServerManager from "../socket-io-server";
 
 export default async function disconnect(socket: Socket) {
   const chatBot = "ChatBot";
-  const io = socketServerManager.getInstance();
+  const io = socketIOServerManager.getInstance();
   const user = userLeave(socket.id);
 
   if (!user) {
@@ -19,6 +19,6 @@ export default async function disconnect(socket: Socket) {
 
   io.to(user.room).emit("roomUsers", {
     room: user.room,
-    users: getRoomUsers(user.room),
+    users: getRoomUsers(user.room, socketIOServerManager),
   });
 }

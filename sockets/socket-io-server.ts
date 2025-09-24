@@ -4,16 +4,16 @@ import { EventTypes } from "./types/event-types";
 import { ISocketIOServer } from "./interfaces/ISocketIOServer";
 import { ActiveUserSocket } from "./types/active-user-socket";
 
-export class SocketServerManager implements ISocketIOServer<Server> {
-  private socketServer: Server;
+export class SocketIOServerManager implements ISocketIOServer<Server> {
+  _socketServer: Server;
   private activeSockets = new Map<string, ActiveUserSocket>();
 
-  setInstance(config?: http.Server | number): SocketServerManager {
-    if (!this.socketServer) {
+  setInstance(config?: http.Server | number): SocketIOServerManager {
+    if (!this._socketServer) {
       if (config) {
-        this.socketServer = new Server(config);
+        this._socketServer = new Server(config);
       } else {
-        this.socketServer = new Server();
+        this._socketServer = new Server();
       }
     }
 
@@ -21,11 +21,11 @@ export class SocketServerManager implements ISocketIOServer<Server> {
   }
 
   getInstance(): Server {
-    if (!this.socketServer) {
+    if (!this._socketServer) {
       this.setInstance();
     }
 
-    return this.socketServer;
+    return this._socketServer;
   }
 
   registerActiveSocket(activeUserSocket: ActiveUserSocket): ActiveUserSocket {
@@ -55,4 +55,4 @@ export class SocketServerManager implements ISocketIOServer<Server> {
   }
 }
 
-export default new SocketServerManager();
+export default new SocketIOServerManager();
