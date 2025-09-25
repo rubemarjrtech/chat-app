@@ -8,12 +8,17 @@ export class SocketIOServerManager implements ISocketIOServer<Server> {
   _socketServer: Server;
   private activeSockets = new Map<string, ActiveUserSocket>();
 
-  setInstance(config?: http.Server | number): SocketIOServerManager {
+  setInstance(serverConfig?: http.Server | number): SocketIOServerManager {
+    const otherConfig = {
+      pingTimeout: 7000,
+      pingInterval: 12000,
+    };
+
     if (!this._socketServer) {
-      if (config) {
-        this._socketServer = new Server(config);
+      if (serverConfig) {
+        this._socketServer = new Server(serverConfig, otherConfig);
       } else {
-        this._socketServer = new Server();
+        this._socketServer = new Server(otherConfig);
       }
     }
 
