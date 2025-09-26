@@ -3,6 +3,7 @@ import * as http from "http";
 import { EventTypes } from "./types/event-types";
 import { ISocketIOServer } from "./interfaces/ISocketIOServer";
 import { ActiveUserSocket } from "./types/active-user-socket";
+import { User } from "./utils/users";
 
 export class SocketIOServerManager implements ISocketIOServer<Server> {
   _socketServer: Server;
@@ -38,8 +39,14 @@ export class SocketIOServerManager implements ISocketIOServer<Server> {
     return activeUserSocket;
   }
 
-  removeActiveSocket(socket: Socket): void {
-    this.activeSockets.delete(socket.id);
+  removeActiveSocket(socket: Socket): User | null {
+    const activeUserSocket = this.getActiveSocket(socket);
+    if (!activeUserSocket) return null;
+    const [activeSocket, user] = activeUserSocket;
+
+    this.activeSockets.delete(activeSocket.id);
+
+    return user;
   }
 
   getActiveSocket(socket: Socket): ActiveUserSocket | void {
@@ -52,11 +59,18 @@ export class SocketIOServerManager implements ISocketIOServer<Server> {
 
   registerAllEvents(events: EventTypes[]) {
     const io = this.getInstance();
-    events.forEach((event) => {
+    // leaving room to deal with more system events later
+    const systemEvents = ["disconnect"];
+
+    for (const event of events) {
       io.on("connection", (socket) => {
-        socket.on(event.name, (...args) => event.handler(socket, ...args));
+        if (systemEvents.includes(event.name) && event.name === "disconnect") {
+          socket.on("disconnect", (reason) => event.handler(socket, reason));
+        } else {
+          socket.on(event.name, (...args) => event.handler(socket, ...args));
+        }
       });
-    });
+    }
   }
 }
 

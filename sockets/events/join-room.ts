@@ -1,12 +1,12 @@
 import { Socket } from "socket.io";
-import { getRoomUsers, User } from "../../src/utils/users";
+import { getRoomUsers, User } from "../utils/users";
 import axios from "axios";
-import { RoomSchemaTypes } from "../../src/database/model/message.model";
 import socketIOServerManager from "../socket-io-server";
 import {
-  formatAxiosResponseMessages,
+  formatAxiosResponse,
   formatMessage,
 } from "../../src/utils/formatMessage";
+import { RoomMessage } from "../../src/types/room-message";
 
 export default async function joinRoom(socket: Socket, userData: User) {
   const chatBot = "ChatBot";
@@ -19,7 +19,7 @@ export default async function joinRoom(socket: Socket, userData: User) {
   socket.join(user.room);
 
   try {
-    const response = await axios.get<RoomSchemaTypes>(
+    const response = await axios.get<RoomMessage[]>(
       `http://localhost:4000/api/chatcord/messages/`,
       {
         params: {
@@ -31,7 +31,7 @@ export default async function joinRoom(socket: Socket, userData: User) {
     if (response.data && response.status === 200) {
       io.to(activeSocket.id).emit(
         "roomMessages",
-        formatAxiosResponseMessages(response.data)
+        formatAxiosResponse(response.data)
       );
     }
   } catch (err) {

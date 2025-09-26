@@ -1,21 +1,13 @@
 import mongoose from "mongoose";
-import { MessageFormat } from "../../types/message-format";
+import { RoomMessage } from "../../types/room-message";
 
-export type RoomSchemaTypes = {
-  room: string;
-  messages: MessageFormat[];
-};
-
-const roomSchema = new mongoose.Schema<RoomSchemaTypes>(
+const roomSchema = new mongoose.Schema<RoomMessage>(
   {
-    room: { type: String, unique: true },
-    messages: [
-      {
-        username: { type: String },
-        text: { type: String },
-        createdAt: { type: Date },
-      },
-    ],
+    room: { type: String, required: true },
+    username: { type: String, required: true },
+    text: { type: String, required: true },
+    createdAt: { type: Date, required: true },
+    messageId: { type: String, required: true, unique: true },
   },
   {
     toJSON: {
@@ -28,7 +20,10 @@ const roomSchema = new mongoose.Schema<RoomSchemaTypes>(
   }
 );
 
-export const RoomMessages = mongoose.model<RoomSchemaTypes>(
+roomSchema.index({ room: 1, messageId: 1 }, { unique: true });
+roomSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
+
+export const RoomMessages = mongoose.model<RoomMessage>(
   "room_messages",
   roomSchema
 );

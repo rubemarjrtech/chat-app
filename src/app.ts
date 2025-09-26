@@ -1,6 +1,6 @@
 import { Application } from "express";
 import database from "./database";
-import { setupGears } from "./redis/gears-file";
+import { setupGears } from "./cache/gears-file";
 import { ICacheClient } from "./cache/interfaces/ICacheClient";
 import cache from "./cache";
 import { IDatabaseClient } from "./database/interfaces/IDatabaseClient";

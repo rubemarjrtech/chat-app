@@ -1,21 +1,22 @@
 import { Request, Response } from "express";
 import { RoomMessages } from "../database/model/message.model";
-import { setMessage } from "../redis/gears-file";
-import { RoomMessageTypes } from "../types/room-message-types";
+import { setMessage } from "../cache/gears-file";
+import { RoomMessage } from "../types/room-message";
 
 export class MessageController {
   public async create(
-    req: Request<unknown, unknown, RoomMessageTypes>,
+    req: Request<unknown, unknown, RoomMessage>,
     res: Response
   ) {
     try {
-      const { room, username, text, createdAt } = req.body;
+      const { room, username, text, createdAt, messageId } = req.body;
 
       await setMessage({
         room,
         username,
         text,
         createdAt,
+        messageId,
       });
 
       res.status(201).send({
@@ -39,7 +40,7 @@ export class MessageController {
         });
       }
 
-      const messages = await RoomMessages.findOne({
+      const messages = await RoomMessages.find({
         room,
       });
 

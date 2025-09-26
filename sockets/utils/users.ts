@@ -1,22 +1,9 @@
-import { Socket } from "socket.io";
-import { SocketIOServerManager } from "../../sockets/socket-io-server";
+import { SocketIOServerManager } from "../socket-io-server";
 
 export type User = {
-  id: Socket["id"];
   username: string;
   room: "JavaScript" | "Python" | "PHP" | "Ruby" | "Java" | "C#";
 };
-
-const users: User[] = [];
-
-// User leaves chat
-export function userLeave(id: string): User | void {
-  const index = users.findIndex((user) => user.id === id);
-
-  if (index !== -1) {
-    return users.splice(index, 1)[0];
-  }
-}
 
 export function getRoomUsers(
   room: string,
