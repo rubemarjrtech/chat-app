@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo
+    container_name: chatcord
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+
+  redis:
+    image: redislabs/redismod:latest
+    container_name: redis-chatcord
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+networks:
+  backend:
