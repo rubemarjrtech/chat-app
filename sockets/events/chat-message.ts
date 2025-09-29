@@ -58,7 +58,7 @@ export default async function chatMessage(
 
       callback({
         success: true,
-        message: "Mensagem enviada com sucesso",
+        message: "Message sent successfully!",
       });
     } catch (err) {
       console.log(err);
