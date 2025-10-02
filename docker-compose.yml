@@ -12,6 +12,8 @@ services:
   redis:
     image: redislabs/redismod:latest
     container_name: redis-chatcord
+    environment:
+      - PY_MONGO_URL=${PY_MONGO_URL}
     ports:
       - "6379:6379"
     networks:

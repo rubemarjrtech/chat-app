@@ -7,7 +7,7 @@ class Cache implements ICacheClient {
 
   async init(): Promise<void> {
     this.redisClient = createClient({
-      url: "redis://localhost:6379",
+      url: process.env.REDIS_CONNECTION,
     });
     await this.redisClient.connect();
   }

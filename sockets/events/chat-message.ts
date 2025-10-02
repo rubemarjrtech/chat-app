@@ -4,10 +4,11 @@ import socketIOServerManager from "../socket-io-server";
 import axios, { AxiosResponse } from "axios";
 import { RoomMessage } from "../../src/types/room-message";
 import crypto from "crypto";
+import { setMessage } from "../../src/cache/gears-file";
 
 export default async function chatMessage(
   socket: Socket,
-  message: string,
+  msg: string,
   callback: Function
 ) {
   const activeUserSocket = socketIOServerManager.getActiveSocket(socket);
@@ -15,7 +16,7 @@ export default async function chatMessage(
   if (!activeUserSocket) {
     callback({
       success: false,
-      error: "Session expired.Try reconnecting.",
+      error: "Session expired. Try reconnecting.",
       code: "SESSION_EXPIRED",
     });
     return;
@@ -30,43 +31,64 @@ export default async function chatMessage(
       code: "SESSION_EXPIRED",
     });
   } else {
-    const msg = formatMessage(user.username, message);
+    const message = formatMessage(user.username, msg);
+    const messageId = crypto.randomUUID();
 
     try {
-      const response = await axios.post<unknown, AxiosResponse, RoomMessage>(
-        "http://localhost:4000/api/chatcord/messages",
-        {
-          username: msg.username,
-          text: msg.text,
-          room: user.room,
-          createdAt: msg.createdAt,
-          messageId: crypto.randomUUID(),
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      if (response.status !== 201) {
-        callback({
-          success: false,
-          message: "Failed saving to database",
-        });
-        return;
-      }
+      await setMessage({
+        room: user.room,
+        username: message.username,
+        text: message.text,
+        createdAt: message.createdAt,
+        messageId,
+      });
 
       const io = socketIOServerManager.getInstance();
-      io.to(user.room).emit("message", msg);
+      io.to(user.room).emit("message", message);
 
       callback({
         success: true,
         message: "Message sent successfully!",
       });
     } catch (err) {
-      console.log(err);
-      callback({
-        success: false,
-        error: "Error sending mensage",
-        code: "SERVER_ERROR",
-      });
+      console.log("error on redis", err);
+
+      // If redis failed, the fallback is saving directly to DB
+      try {
+        const response = await axios.post<unknown, AxiosResponse, RoomMessage>(
+          "http://localhost:4000/api/chatcord/messages",
+          {
+            username: message.username,
+            text: message.text,
+            room: user.room,
+            createdAt: message.createdAt,
+            messageId,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        if (response.status !== 201) {
+          callback({
+            success: false,
+            message: "Failed sending message",
+          });
+          return;
+        }
+
+        const io = socketIOServerManager.getInstance();
+        io.to(user.room).emit("message", message);
+
+        callback({
+          success: true,
+          message: "Message sent successfully!",
+        });
+      } catch (err) {
+        console.log("error with axios", err);
+        callback({
+          success: false,
+          message: "Failed sending message",
+        });
+      }
     }
   }
 }

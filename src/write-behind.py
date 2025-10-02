@@ -3,6 +3,7 @@ from rgsync.Connectors import MongoConnection, MongoConnector
 from rgsync.common import *
 from datetime import datetime
 import re
+from decouple import config
 
 class CustomMongoConnector(MongoConnector):
     def __init__(self, *args, **kwargs):
@@ -133,7 +134,7 @@ class CustomMongoConnector(MongoConnector):
     
 try:
     WriteBehindLog("Criando conexão MongoDB...")
-    MONGODB_URL = 'mongodb://chatcord:27017'
+    MONGODB_URL = config('PY_MONGO_URL')
     connection = MongoConnection('', '', '', '', MONGODB_URL)
     WriteBehindLog(f" Conexão criada: {connection}")
     WriteBehindLog(" Criando CustomMongoConnector...")

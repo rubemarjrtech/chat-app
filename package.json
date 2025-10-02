@@ -24,8 +24,8 @@
     "@redis/search": "^1.2.0",
     "@redis/time-series": "^1.1.0",
     "axios": "^1.7.2",
+    "dotenv": "^17.2.2",
     "express": "^4.19.2",
-    "moment": "^2.30.1",
     "mongoose": "^8.5.1",
     "redis": "^4.7.0",
     "socket.io": "^4.7.5"

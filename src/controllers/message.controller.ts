@@ -11,13 +11,14 @@ export class MessageController {
     try {
       const { room, username, text, createdAt, messageId } = req.body;
 
-      await setMessage({
+      const roomMessage = new RoomMessages({
         room,
-        username,
         text,
-        createdAt,
+        username,
         messageId,
+        createdAt,
       });
+      await roomMessage.save();
 
       res.status(201).send({
         message: "Message stored successfully!",
