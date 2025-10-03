@@ -1,7 +1,8 @@
 import express, { Application, json } from "express";
 import { IFrameworkClient } from "../interfaces/IFrameworkClient";
-import path from "path";
 import { router } from "../routes";
+import helmet from "helmet";
+import cors from "cors";
 
 class Framework implements IFrameworkClient<Application> {
   instance: Application;
@@ -21,9 +22,14 @@ class Framework implements IFrameworkClient<Application> {
   }
 
   configure(): void {
+    this.instance.use(helmet());
+    this.instance.use(
+      cors({
+        origin: process.env.REQUESTS_ORIGIN,
+      })
+    );
     this.instance.use(json());
     this.instance.use("/api", router);
-    this.instance.use(express.static(path.join(__dirname, "..", "public")));
   }
 }
 
