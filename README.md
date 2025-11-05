@@ -1,18 +1,35 @@
 ### About this project:
 
-Project developed with the following technologies: TypeScript, Nodejs, Expressjs, MongoDB, Redis and WebSockets.
+Project developed with the following technologies:
+
+- TypeScript
+- Nodejs
+- Expressjs
+- MongoDB
+- Redis
+- WebSockets.
 
 This is a chat application where users can chat with other users in real time if they are in the same room.
 
 ## Testing the project:
 
-Start the project.
+You will need to install the docker images at docker-compose.yml.
 
-Pick a room and enter an username:
+Start the project with npm run start:dev or npm run start.
+
+Pick a room and enter an username
 
 Open two or more tabs on your favorite testing software. Join the same room you joined on the first tab, on the second tab.
 
 Then send some test messages in both the first and second tabs. You will see only they can see these messages, users from different room cannot see it.
+
+What you should see after users send some messages:
+
+![Room Messages](https://i.ibb.co/b5kdhcv8/Captura-de-tela-2025-11-05-102842.png)
+
+You can also see the users in the room currently:
+
+![Room Users](https://i.ibb.co/cKVqJ1k0/Captura-de-tela-2025-11-05-102854.png)
 
 ## Versioning
 
