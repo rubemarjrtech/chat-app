@@ -25,11 +25,11 @@ Then send some test messages in both the first and second tabs. You will see onl
 
 What you should see after users send some messages:
 
-![Room Messages](https://i.ibb.co/b5kdhcv8/Captura-de-tela-2025-11-05-102842.png)
+![Room Messages](./github-assets/room-messages.png)
 
 You can also see the users in the room currently:
 
-![Room Users](https://i.ibb.co/cKVqJ1k0/Captura-de-tela-2025-11-05-102854.png)
+![Room Users](./github-assets/room-users.png)
 
 ## Versioning
 
