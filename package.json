@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start:dev": "ts-node-dev src/server.ts",
-    "start": "node build/server.js"
+    "start": "npm run build && node build/server.js"
   },
   "keywords": [],
   "author": "Rubemar Junior",
